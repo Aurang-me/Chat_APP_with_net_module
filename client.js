@@ -6,6 +6,8 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+let id;
+
 const client = net.createConnection(
     { host: "127.0.0.1", port: 3008 },
     async () => {
@@ -16,15 +18,28 @@ const client = net.createConnection(
 
             await clearLine(0)
 
-            client.write(message);
+            client.write(`${id}-message-${message}`);
         }
         ask();
 
         client.on("data", async (data) => {
+
             console.log();
             await moveCursor(0, -1);
             await clearLine(0);
-            console.log(data.toString("utf-8"));
+
+            data
+            if (data.toString("utf-8").substring(0, 2) === "id") {
+                id = data.toString("utf-8").substring(3);
+                console.log("Your id is " + id + "\n");
+
+            } else {
+                if (data.toString("utf-8").substring(3)) {
+
+                    console.log(data.toString("utf-8"));
+                }
+            }
+
             ask();
         })
 
